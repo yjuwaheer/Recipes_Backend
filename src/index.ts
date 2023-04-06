@@ -1,5 +1,6 @@
 import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
+import cors from "cors";
 import { connectDB, initializeDB } from "./shared/dbConnect";
 
 dotenv.config();
@@ -13,9 +14,13 @@ import recipeRouter from "./routes/recipes";
 try {
   connectDB();
 
+  app.use(cors());
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
+  app.get("/", (req, res) => {
+    res.send("Server running");
+  });
   app.use("/recipes", recipeRouter);
 
   app.listen(port, () => {

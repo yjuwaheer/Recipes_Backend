@@ -32,8 +32,8 @@ const initializeDB = async () => {
           id                    SERIAL PRIMARY KEY,
           recipe_name           VARCHAR(100) NOT NULL,
           recipe_description    VARCHAR(1000) NOT NULL,
-          recipe_instructions   VARCHAR(5000) NOT NULL,
           recipe_ingredients    TEXT [] NOT NULL,
+          recipe_instructions   VARCHAR(5000) NOT NULL,
           recipe_image_url      VARCHAR(250)
         )
       `
