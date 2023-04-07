@@ -1,28 +1,22 @@
-import express, { Express, Request, Response, Router } from "express";
-import { addRecipe, getRecipes } from "../controllers/recipe";
+import express, { Express, Router } from "express";
+import {
+  addRecipe,
+  deleteRecipe,
+  getRecipe,
+  getRecipes,
+  updateRecipe,
+} from "../controllers/recipe";
 
 const router: Router = express.Router();
 
 router.get("/", getRecipes);
 
-router.get("/:id", (req: Request, res: Response) => {
-  const recipeId = req.params.id;
-
-  res.json("Get one recipe");
-});
+router.get("/:id", getRecipe);
 
 router.post("/", addRecipe);
 
-router.put("/:id", (req: Request, res: Response) => {
-  const recipeId = req.params.id;
+router.put("/", updateRecipe);
 
-  res.json("Updated a recipe");
-});
-
-router.delete("/:id", (req: Request, res: Response) => {
-  const recipeId = req.params.id;
-
-  res.json("Deleted a recipe");
-});
+router.delete("/", deleteRecipe);
 
 export default router;
