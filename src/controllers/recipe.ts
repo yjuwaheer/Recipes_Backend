@@ -52,6 +52,33 @@ const getRecipe = async (req: Request, res: Response) => {
   }
 };
 
+// Search recipes by name or ingredients
+const searchRecipe = async (req: Request, res: Response) => {
+  const { searchValue } = req.query;
+
+  try {
+    const data = await client.query(
+      `
+        SELECT * FROM recipes WHERE
+        recipe_name ILIKE '%${searchValue}%'
+        OR ARRAY_TO_STRING(recipe_ingredients, ',') ILIKE '%${searchValue}%'
+      `
+    );
+
+    res.json({
+      success: true,
+      message: "Fetched recipe successfully",
+      recipes: data.rows,
+    });
+  } catch (error) {
+    res.json({
+      success: false,
+      message: "Failed to search",
+      error: error,
+    });
+  }
+};
+
 // Add recipe
 const addRecipe = async (req: Request, res: Response) => {
   const { name, description, ingredients, instructions, imageLink } = req.body;
@@ -154,4 +181,11 @@ const deleteRecipe = async (req: Request, res: Response) => {
   }
 };
 
-export { getRecipes, getRecipe, addRecipe, updateRecipe, deleteRecipe };
+export {
+  getRecipes,
+  getRecipe,
+  searchRecipe,
+  addRecipe,
+  updateRecipe,
+  deleteRecipe,
+};
