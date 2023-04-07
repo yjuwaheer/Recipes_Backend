@@ -79,6 +79,29 @@ const searchRecipe = async (req: Request, res: Response) => {
   }
 };
 
+// Get a random recipe
+const getRandomRecipe = async (req: Request, res: Response) => {
+  try {
+    const data = await client.query(
+      `
+        SELECT * FROM recipes ORDER BY RANDOM() LIMIT 1
+      `
+    );
+
+    res.json({
+      success: true,
+      message: "Fetched recipe successfully",
+      recipes: data.rows,
+    });
+  } catch (error) {
+    res.json({
+      success: false,
+      message: "Failed to search",
+      error: error,
+    });
+  }
+}
+
 // Add recipe
 const addRecipe = async (req: Request, res: Response) => {
   const { name, description, ingredients, instructions, imageLink } = req.body;
@@ -185,6 +208,7 @@ export {
   getRecipes,
   getRecipe,
   searchRecipe,
+  getRandomRecipe,
   addRecipe,
   updateRecipe,
   deleteRecipe,

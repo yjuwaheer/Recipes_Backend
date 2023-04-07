@@ -2,6 +2,7 @@ import express, { Express, Router } from "express";
 import {
   addRecipe,
   deleteRecipe,
+  getRandomRecipe,
   getRecipe,
   getRecipes,
   searchRecipe,
@@ -13,6 +14,8 @@ const router: Router = express.Router();
 router.get("/", getRecipes);
 
 router.get("/search", searchRecipe);
+
+router.get("/random", getRandomRecipe);
 
 router.get("/:id", getRecipe);
 
