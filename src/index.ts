@@ -14,7 +14,11 @@ import recipeRouter from "./routes/recipes";
 try {
   connectDB();
 
-  app.use(cors());
+  app.use(
+    cors({
+      origin: process.env.FRONTEND_URL,
+    })
+  );
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
