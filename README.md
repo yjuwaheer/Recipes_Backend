@@ -26,6 +26,13 @@ Backend for Recipes app
 - Delete a recipe
 - Search recipes by name or ingredients
 
+### Languages / Libraries / Tools
+
+- TypeScript
+- NodeJS
+- Express
+- PostgreSQL (pg package)
+
 ### To improve
 
 - Add swagger
