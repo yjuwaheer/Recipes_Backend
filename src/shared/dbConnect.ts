@@ -3,9 +3,12 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+const envPort = parseInt(process.env.DB_PORT || '')
+const userPort = Number.isInteger(envPort) ? envPort : 5432
+
 const client = new Client({
   host: process.env.DB_HOST,
-  port: 5432,
+  port: userPort,
   database: process.env.DB_NAME,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
