@@ -33,7 +33,7 @@ Backend for Recipes app
 - Express
 - PostgreSQL (pg package)
 
-### To improve
+### Things to improve
 
 - Add swagger
 - Add testing
