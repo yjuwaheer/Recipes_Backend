@@ -31,3 +31,4 @@ Backend for Recipes app
 - Add swagger
 - Add testing
 - Use an ORM
+- Add Dockerfile
