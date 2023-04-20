@@ -6,7 +6,7 @@ const getRecipes = async (req: Request, res: Response) => {
   try {
     const data = await client.query(
       `
-        SELECT * FROM recipes 
+        SELECT * FROM recipes LIMIT 50
       `
     );
 
@@ -60,8 +60,9 @@ const searchRecipe = async (req: Request, res: Response) => {
     const data = await client.query(
       `
         SELECT * FROM recipes WHERE
-        recipe_name ILIKE '%${searchValue}%'
+        recipe_title ILIKE '%${searchValue}%'
         OR ARRAY_TO_STRING(recipe_ingredients, ',') ILIKE '%${searchValue}%'
+        LIMIT 50
       `
     );
 
@@ -100,16 +101,16 @@ const getRandomRecipe = async (req: Request, res: Response) => {
       error: error,
     });
   }
-}
+};
 
 // Add recipe
 const addRecipe = async (req: Request, res: Response) => {
-  const { name, description, ingredients, instructions, imageLink } = req.body;
+  const { title, ingredients, instructions, times, imageLink } = req.body;
+
+  console.log(instructions);
 
   // Convert ingredients to a postgres array
-  const separateIngredients: string[] = ingredients
-    .replace(/ /g, "")
-    .split(",");
+  const separateIngredients: string[] = ingredients.trim().split(";");
   let newIngredientsList: string = "";
   for (let index = 0; index < separateIngredients.length; index++) {
     newIngredientsList +=
@@ -120,14 +121,26 @@ const addRecipe = async (req: Request, res: Response) => {
   newIngredientsList = `{${newIngredientsList}}`;
   //
 
+  // Convert times to a postgres array
+  const separateTimes: string[] = times.trim().split(";");
+  let newTimesList: string = "";
+  for (let index = 0; index < separateTimes.length; index++) {
+    newTimesList +=
+      index === separateTimes.length - 1
+        ? `"${separateTimes[index]}"`
+        : `"${separateTimes[index]}",`;
+  }
+  newTimesList = `{${newTimesList}}`;
+  //
+
   try {
     await client.query(
       `
         INSERT INTO recipes 
-        (recipe_name, recipe_description , recipe_ingredients, recipe_instructions, recipe_image_url)
+        (recipe_title, recipe_ingredients, recipe_instructions, recipe_times, recipe_image_url)
         VALUES ($1, $2, $3, $4, $5)
       `,
-      [name, description, newIngredientsList, instructions, imageLink]
+      [title, newIngredientsList, instructions, newTimesList, imageLink]
     );
 
     res.json({ success: true, message: "Added recipe successfully" });
@@ -139,13 +152,13 @@ const addRecipe = async (req: Request, res: Response) => {
 
 // Update recipe
 const updateRecipe = async (req: Request, res: Response) => {
-  const { name, description, ingredients, instructions, imageLink, recipeId } =
+  const { title, ingredients, instructions, times, imageLink, recipeId } =
     req.body;
 
   // Convert ingredients to a postgres array
   const separateIngredients: string[] = ingredients
     .replace(/ /g, "")
-    .split(",");
+    .split(";");
   let newIngredientsList: string = "";
   for (let index = 0; index < separateIngredients.length; index++) {
     newIngredientsList +=
@@ -156,15 +169,27 @@ const updateRecipe = async (req: Request, res: Response) => {
   newIngredientsList = `{${newIngredientsList}}`;
   //
 
+  // Convert times to a postgres array
+  const separateTimes: string[] = times.replace(/ /g, "").split(";");
+  let newTimesList: string = "";
+  for (let index = 0; index < separateTimes.length; index++) {
+    newTimesList +=
+      index === separateTimes.length - 1
+        ? `"${separateTimes[index]}"`
+        : `"${separateTimes[index]}",`;
+  }
+  newTimesList = `{${newTimesList}}`;
+  //
+
   try {
     await client.query(
       `
         UPDATE recipes 
-        SET (recipe_name, recipe_description , recipe_ingredients, recipe_instructions, recipe_image_url)
+        SET (recipe_title, recipe_ingredients, recipe_instructions, recipe_times, recipe_image_url)
         = ($1, $2, $3, $4, $5)
         WHERE id = $6
       `,
-      [name, description, newIngredientsList, instructions, imageLink, recipeId]
+      [title, newIngredientsList, instructions, newTimesList, imageLink, recipeId]
     );
 
     res.json({ success: true, message: "Updated recipe successfully" });
